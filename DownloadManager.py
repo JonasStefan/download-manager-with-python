@@ -6,6 +6,7 @@ import PySimpleGUI as pg
 
 files = []
 window = None
+afm = "False"
 
 ############################################################Setup the GUI
 
@@ -107,9 +108,16 @@ class FileHandlerClass:
     def make_managed_downloads(self, InputDFdir, InputMDFdir): # create all folders the Download Manager needs (InputDFdir = The Path to your Downloads folder,
         os.chdir(os.path.dirname(__file__))                    # InputMDFdir = The directory of the Managed Downloads folder)
         s = shelve.open("DownloadManager") # saving all needed variables
-        s["DownloadPath"] = InputDFdir
-        s["DownloadManagerPath"] = str("{}/ManagedDownloads".format(InputMDFdir))
-        s["FilePath"] = str(__file__)
+        if InputDFdir != "":
+            s["DownloadPath"] = InputDFdir
+        else:
+            user = str(os.popen("echo %username%").read())
+            s["DownloadPath"] = r"C:\Users/{}/Downloads".format(user)
+        if InputMDFdir != "":
+            s["DownloadManagerPath"] = str("{}/ManagedDownloads".format(InputMDFdir))
+        else:
+            s["DownloadManagerPath"] = "C:/ManagedDownloads"
+        s["FilePath"] = os.path.dirname(__file__)
         s["afm"] = "False"
         s.close()
         self.DownloadPath = str(InputDFdir)
